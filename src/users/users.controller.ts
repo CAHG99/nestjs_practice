@@ -1,7 +1,8 @@
 // src/users/users.controller.ts
 import { Controller, Get, Post, Body, Patch, Delete, Param} from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, UpdateUserDto } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
 
@@ -27,15 +28,13 @@ export class UsersController {
   @Patch(":id")
   @ApiOperation({ summary: 'Actualizar un usuario' })
   @ApiResponse({ status: 200, description: 'Usuario actualizado correctamente..', type: User })
-  update(
-    @Param('id') id: number,
-    @Body() updateUserDto: Partial<UpdateUserDto>): Promise<User> {
+  update(@Param('id') id: number, @Body() updateUserDto: Partial<UpdateUserDto>): Promise<User> {
     return this.usersService.update(id, updateUserDto);
 }
   @Delete("id")
   @ApiOperation({ summary: 'Eliminar un usuario' })
   @ApiResponse({ status: 200, description: 'Usuario eliminado.' })
-  delete(@Param('id') id: number): Promise<void> {
-    return this.usersService.delete(id);
+  remove(@Param('id') id: number): Promise<void> {
+    return this.usersService.remove(id);
   }
 }

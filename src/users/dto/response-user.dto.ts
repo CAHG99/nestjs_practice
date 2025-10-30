@@ -1,14 +1,19 @@
-// src/users/dto/create-user.dto.ts
-import { IsString, IsEmail, Length, IsOptional } from 'class-validator';
+import { IsString, IsEmail, IsInt } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateUserDto {
+export class ResponseUserDto {
+  @ApiProperty({
+    description: 'Identificador único del usuario',
+    example: 1,
+  })
+  @IsInt({ message: 'El ID debe ser un número entero' })
+  readonly id: number;
+
   @ApiProperty({
     description: 'Nombre del usuario',
     example: 'Juan Pérez',
   })
   @IsString({ message: 'El nombre debe ser texto' })
-  @Length(2, 100, { message: 'El nombre debe tener entre 2 y 100 caracteres' })
   readonly name: string;
 
   @ApiProperty({
@@ -18,4 +23,3 @@ export class CreateUserDto {
   @IsEmail({}, { message: 'El correo electrónico no es válido' })
   readonly email: string;
 }
-
