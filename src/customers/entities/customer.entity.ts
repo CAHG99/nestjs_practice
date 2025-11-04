@@ -9,13 +9,9 @@ export class Customer {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty({ example: 'Carlos', description: 'Nombre del cliente' })
+  @ApiProperty({ example: 'Carlos Pérez', description: 'Nombre completo del cliente' })
   @Column()
-  firstName: string;
-
-  @ApiProperty({ example: 'Pérez', description: 'Apellido del cliente' })
-  @Column()
-  lastName: string;
+  fullname: string;
 
   @ApiProperty({ example: 'carlos@example.com', description: 'Correo electrónico único' })
   @Column({ unique: true })

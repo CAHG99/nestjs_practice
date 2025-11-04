@@ -24,6 +24,10 @@ export class Product {
   @Column({ default: 0 })
   stock: number;
 
+  @ApiProperty({ example: true, description: 'Indica si el producto está activo' })
+  @Column({ default: true })
+  isActive: boolean;
+
   @ManyToOne(() => Category, (category) => category.products, { eager: true })
   @JoinColumn({ name: 'category_id' })
   category: Category;

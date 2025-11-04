@@ -1,4 +1,4 @@
-import { IsString, IsEmail, IsInt } from 'class-validator';
+import { IsString, IsEmail, IsInt, IsBoolean, IsDateString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ResponseUserDto {
@@ -10,11 +10,18 @@ export class ResponseUserDto {
   readonly id: number;
 
   @ApiProperty({
-    description: 'Nombre del usuario',
-    example: 'Juan Pérez',
+    example: "1",
+    description: 'ID del rol asignado al usuario',
   })
-  @IsString({ message: 'El nombre debe ser texto' })
-  readonly name: string;
+  @IsInt({ message: 'El ID del rol debe ser un número entero' })
+  readonly role_id: number;
+
+  @ApiProperty({
+    description: 'Nombre del usuario',
+    example: 'Juanpérez',
+  })
+  @IsString({ message: 'El nombre de usuario debe ser texto' })
+  readonly username: string;
 
   @ApiProperty({
     description: 'Correo electrónico del usuario',
@@ -22,4 +29,25 @@ export class ResponseUserDto {
   })
   @IsEmail({}, { message: 'El correo electrónico no es válido' })
   readonly email: string;
+
+  @ApiProperty({
+    example: true,
+    description: 'Indica si el usuario está activo',
+  })
+  @IsBoolean()
+  is_active: boolean;
+
+  @ApiProperty({
+    description: 'Fecha de creación del usuario',
+    example: '2024-01-01T00:00:00Z',
+  })
+  @IsDateString()
+  readonly createdAt: Date;
+
+  @ApiProperty({
+    description: 'Fecha de actualización del usuario',
+    example: '2024-01-02T00:00:00Z',
+  })
+  @IsDateString()
+  readonly updatedAt: Date;
 }

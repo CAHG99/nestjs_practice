@@ -16,6 +16,10 @@ export class Order {
   @Column('decimal', { precision: 10, scale: 2 })
   total: number;
 
+  @ApiProperty({ example: true, description: 'Indica si la orden está activa' })
+  @Column({ default: true })
+  isActive: boolean;
+
   @ManyToOne(() => Customer, (customer) => customer.orders, { eager: true })
   @JoinColumn({ name: 'customer_id' })
   customer: Customer;

@@ -35,6 +35,6 @@ export class UsersController {
   @ApiOperation({ summary: 'Eliminar un usuario' })
   @ApiResponse({ status: 200, description: 'Usuario eliminado.' })
   remove(@Param('id') id: number): Promise<void> {
-    return this.usersService.remove(id);
+    return this.usersService.delete(id);
   }
 }

@@ -25,6 +25,10 @@ export class Category {
   @Column({ nullable: true })
   description: string;
 
+  @ApiProperty({ example: true, description: 'Indica si la categoría está activa' })
+  @Column({ default: true })
+  isActive: boolean;
+
   @OneToMany(() => Product, (product) => product.category)
   products: Product[];
 }

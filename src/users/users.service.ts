@@ -5,48 +5,101 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto} from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-
+import { Role } from '../role/entities/role.entity';
+import { ResponseUserDto } from './dto/response-user.dto';
 @Injectable()
-export class UsersService implements OnModuleInit {
+export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    @InjectRepository(Role)
+    private readonly roleRepository: Repository<Role>,
   ) {}
 
-  async onModuleInit() {
-    const count = await this.usersRepository.count();
-    if (count === 0) {
-      await this.usersRepository.save([
-        { name: 'Carlos', email: 'carlos@example.com' },
-        { name: 'María', email: 'maria@example.com' },
-      ]);
-    }
+  // ==========================
+  // Método helper: mapea User a ResponseUserDto
+  // ==========================
+  private mapToResponseDto(user: User): ResponseUserDto {
+    return {
+      id: user.id,
+      role_id: user.role?.id,
+      username: user.username,
+      email: user.email,
+      is_active: user.is_active,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
   }
 
-  findAll(): Promise<User[]> {
-    return this.usersRepository.find();
+  // ==========================
+  // Get all users
+  // ==========================
+  async findAll(): Promise<ResponseUserDto[]> {
+    const users = await this.usersRepository.find({ relations: ['role'] });
+    return users.map(this.mapToResponseDto);
   }
 
-  create(createUserDto: CreateUserDto): Promise<User> {
-    const user = this.usersRepository.create(createUserDto);
-    return this.usersRepository.save(user);
+  // ==========================
+  // Get a single user by ID
+  // ==========================
+  async findOne(id: number): Promise<ResponseUserDto> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['role'],
+    });
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+    return this.mapToResponseDto(user);
   }
 
-  async update(id: number, updateUserDto: Partial<UpdateUserDto>): Promise<User> {
-    const user = await this.usersRepository.findOne({ where: { id } });
+  // ==========================
+  // Create a new user
+  // ==========================
+  async create(createUserDto: CreateUserDto): Promise<ResponseUserDto> {
+    // Obtener el rol desde la base de datos
+    const role = await this.roleRepository.findOne({
+      where: { id: createUserDto.role_id },
+    });
+    if (!role) throw new NotFoundException('Rol no encontrado');
 
-    if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
+    const user = this.usersRepository.create({
+      ...createUserDto,
+      role,
+    });
+
+    const savedUser = await this.usersRepository.save(user);
+    return this.mapToResponseDto(savedUser);
+  }
+
+  // ==========================
+  // Update an existing user
+  // ==========================
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<ResponseUserDto> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['role'],
+    });
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+
+    // Si viene un roleId, buscar el rol y asignarlo
+    if (updateUserDto.role_id) {
+      const role = await this.roleRepository.findOne({
+        where: { id: updateUserDto.role_id },
+      });
+      if (!role) throw new NotFoundException('Rol no encontrado');
+      user.role = role;
     }
 
     Object.assign(user, updateUserDto);
-    return this.usersRepository.save(user);
+    const updatedUser = await this.usersRepository.save(user);
+    return this.mapToResponseDto(updatedUser);
   }
 
-  async delete(id: number): Promise<void> {
+  // ==========================
+  // Delete a user
+  // ==========================
+  async remove(id: number): Promise<void> {
     const result = await this.usersRepository.delete(id);
-    if (result.affected === 0) {
-      throw new NotFoundException('Usuario no encontrado');
-    }
+    if (result.affected === 0) throw new NotFoundException('Usuario no encontrado');
   }
 }
+

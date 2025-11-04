@@ -12,9 +12,9 @@ export class Role {
   @Column({ unique: true })
   name: string;
 
-  @ApiProperty({ example: 'Rol de administrador', description: 'Descripción del rol' })
-  @Column({ nullable: true })
-  description: string;
+  @ApiProperty({ example: true, description: 'Indica si el rol está activo' })
+  @Column({ default: true })
+  isActive: boolean;
 
   @OneToMany(() => User, (user) => user.role)
   users: User[];
