@@ -1,0 +1,4 @@
+id,name,isActive
+1,admin,true
+2,customer,true
+3,user,true

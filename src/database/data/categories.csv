@@ -1,0 +1,6 @@
+id,name,description,isActive
+1,Electrónica,Categoría de productos electrónicos,true
+2,Ropa,Categoría de vestimenta,true
+3,Hogar,Categoría de productos para el hogar,true
+4,Libros,Categoría de libros y literatura,true
+5,Deportes,Categoría de artículos deportivos,true

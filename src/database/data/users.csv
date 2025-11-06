@@ -1,0 +1,6 @@
+id,username,email,password,role_id,is_active,createdAt,updatedAt
+1,carlos123,carlos123@example.com,Password123,1,true,2025-01-01T00:00:00Z,2025-01-02T00:00:00Z
+2,ana456,ana456@example.com,Password123,3,true,2025-01-03T00:00:00Z,2025-01-04T00:00:00Z
+3,juan789,juan789@example.com,Password123,3,true,2025-01-05T00:00:00Z,2025-01-06T00:00:00Z
+4,lucia321,lucia321@example.com,Password123,2,true,2025-01-07T00:00:00Z,2025-01-08T00:00:00Z
+5,diego654,diego654@example.com,Password123,2,true,2025-01-09T00:00:00Z,2025-01-10T00:00:00Z

@@ -1,0 +1,6 @@
+id,name,description,price,stock,isActive,category_id
+1,Smartphone,Teléfono inteligente,999.99,50,true,1
+2,Camiseta,Camiseta de algodón,19.99,200,true,2
+3,Lámpara de mesa,Lámpara decorativa,45.50,100,true,3
+4,Libro de ciencia ficción,Novela futurista,15.75,150,true,4
+5,Balón de fútbol,Balón oficial,29.99,80,true,5

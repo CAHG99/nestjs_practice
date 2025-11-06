@@ -1,53 +1,42 @@
 // src/app.module.ts
-import { Module } from '@nestjs/common';
+import { Module, OnApplicationBootstrap } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { typeOrmConfig} from './config/typeorm.config';
 import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
 import { OrdersModule } from './orders/orders.module';
 import { CustomersModule } from './customers/customers.module';
 import { CategoryModule } from './categories/category.module';
 import { RoleModule } from './role/role.module';
-import { User } from './users/entities/user.entity';
-import { Product } from './products/entities/product.entity';
-import { Order } from './orders/entities/order.entity';
-import { Customer } from './customers/entities/customer.entity';
-import { Category } from './categories/entities/category.entity';
-import { Role } from './role/entities/role.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
-let envFilePath = '.env.development';
-if (process.env.ENVIRONMENT === 'PRODUCTION') {
-  envFilePath = '.env.production';
-} else if (process.env.ENVIRONMENT === 'TEST') {
-  envFilePath = '.env.testing';
-}
-
+import { SeedModule } from './database/seed.module';
+import { SeedService } from './database/seed.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true, // ⚡ hace que esté disponible en todo el proyecto
-      envFilePath,
-    }),    
-    TypeOrmModule.forRoot({
-      type: 'postgres',          // Cambia por tu base (mysql, sqlite, etc.)
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
-      username: process.env.DB_USER,
-      password: process.env.DB_PASS,
-      database: process.env.DB_NAME,
-      entities: [User, Product, Order, Customer, Category, Role],
-      synchronize: true,         // Solo para dev: crea tablas automáticamente
-      autoLoadEntities: true,   // Carga entidades automáticamente
     }),
+    TypeOrmModule.forRoot(typeOrmConfig),
     UsersModule,
     ProductsModule,
     OrdersModule,
     CustomersModule,
     CategoryModule,
     RoleModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+
+export class AppModule implements OnApplicationBootstrap {
+  constructor(private readonly seedService: SeedService) {}
+
+  async onApplicationBootstrap() {
+    if (process.env.ENVIRONMENT !== 'PRODUCTION') {
+      await this.seedService.run();
+    }
+  }
+}
